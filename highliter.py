@@ -8,10 +8,7 @@ def cycle_through_characters(
 
     while current_char_index < len(chars) - 1 and not a_found:
         char = chars[current_char_index]
-        print(char)
-
-        # if char == '$' or char == 'A':
-            # pdb.set_trace()
+        # print(char)
 
         if char == '$':
             count_dollar += 1
@@ -19,30 +16,20 @@ def cycle_through_characters(
 
         if count_dollar % 2 == 1 and char == 'A':
             a_found = True
-            replace_character(
+            menu(
                 location_char=current_char_index,
                 location_dollar=location_dollar,
                 chars=chars,
                 count_dollar=count_dollar
             )
+
         current_char_index += 1
 
-
-    # for counter in range(current_char_index, len(chars) - 1):
-    #     char = chars[counter]
-
-    #     if char == '$':
-    #         count_dollar += 1
-    #         location_dollar = counter
-
-    #     if count_dollar % 2 == 1 and char == 'A':
-    #         replace_character(
-    #             location_char=counter,
-    #             location_dollar=location_dollar,
-    #             chars=chars)
+    if current_char_index == len(chars) - 1:
+        output_to_new_file(chars=chars)
 
 
-def replace_character(location_char, location_dollar, chars, count_dollar):
+def menu(location_char, location_dollar, chars, count_dollar):
     offset = location_char - location_dollar + 3
 
     printer = ' ' * offset + '^'
@@ -60,14 +47,14 @@ def replace_character(location_char, location_dollar, chars, count_dollar):
     # if i == 'i':
     #     count_dollar += 1
     #     print('number of dollar signs now ') + str(count_dollar)
-    #     replace_character(
+    #     menu(
     #         location_char=location_char,
     #         location_dollar=location_dollar,
     #         chars=chars)
 
     if i == 'r':
         print('replacing things\n')
-        write_to_file(location_char, location_dollar, chars)
+        replace_characters(location_char, location_dollar, chars)
         return
     elif i == 's':
         print('no replacmenet\n')
@@ -75,18 +62,16 @@ def replace_character(location_char, location_dollar, chars, count_dollar):
         pdb.set_trace()
     else:
         print('didn\'t understand')
-        replace_character(location_char, location_dollar, chars)
+        menu(location_char, location_dollar, chars, count_dollar)
 
 
-def write_to_file(location_char, location_dollar, chars):
-    string_to_write = '\\textcolor{green}{A}'
+def replace_characters(location_char, location_dollar, chars):
+    string_to_insert = '\\textcolor{green}{A}'
 
     new_chars = chars[:location_char - 1] + \
-        string_to_write + chars[location_char + 1:]
+        string_to_insert + chars[location_char + 1:]
 
-    pdb.set_trace()
-
-    new_location_char = location_char + len(string_to_write) - 1
+    new_location_char = location_char + len(string_to_insert) - 1
     cycle_through_characters(
         chars=new_chars,
         current_char_index=new_location_char,
@@ -94,6 +79,11 @@ def write_to_file(location_char, location_dollar, chars):
         location_dollar=location_dollar)
 
 
+def output_to_new_file(chars='', filename='foo.tex'):
+    pdb.set_trace()
+    f = open(filename, 'w+')
+    f.write(chars)
+    f.close()
 
 if __name__ == '__main__':
     file = open('pset1.tex', 'r+')
