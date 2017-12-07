@@ -1,6 +1,10 @@
 import pdb
 # import fileinput
 
+CHAR_TO_FIND = 'A'
+REPLACEMENT_STRING = '\\textcolor\{green\}\{A\}'
+NEW_FILENAME = 'xkcd.tex'
+
 
 def cycle_through_characters(
         chars='', current_char_index=0, count_dollar=0, location_dollar=0):
@@ -14,7 +18,7 @@ def cycle_through_characters(
             count_dollar += 1
             location_dollar = current_char_index
 
-        if count_dollar % 2 == 1 and char == 'A':
+        if count_dollar % 2 == 1 and char == CHAR_TO_FIND:
             a_found = True
             menu(
                 location_char=current_char_index,
@@ -66,12 +70,10 @@ def menu(location_char, location_dollar, chars, count_dollar):
 
 
 def replace_characters(location_char, location_dollar, chars):
-    string_to_insert = '\\textcolor{green}{A}'
-
     new_chars = chars[:location_char - 1] + \
-        string_to_insert + chars[location_char + 1:]
+        REPLACEMENT_STRING + chars[location_char + 1:]
 
-    new_location_char = location_char + len(string_to_insert) - 1
+    new_location_char = location_char + len(REPLACEMENT_STRING) - 1
     cycle_through_characters(
         chars=new_chars,
         current_char_index=new_location_char,
@@ -79,13 +81,43 @@ def replace_characters(location_char, location_dollar, chars):
         location_dollar=location_dollar)
 
 
-def output_to_new_file(chars='', filename='foo.tex'):
+def output_to_new_file(chars=''):
+    f = open(NEW_FILENAME, 'w+')
     pdb.set_trace()
-    f = open(filename, 'w+')
     f.write(chars)
     f.close()
 
+
+def initial_prompt():
+    print('What file are you doing find and replace in?')
+    filename = raw_input('--> ')
+
+    print('what do you wnat your new file to be named?')
+    globals()['NEW_FILENAME'] = raw_input('--> ')
+
+    print('What character are you searching for (in formulas)?')
+    globals()['CHAR_TO_FIND'] = raw_input('--> ')
+
+    print('What do you want to replace it with?')
+    globals()['REPLACEMENT_STRING'] = raw_input('--> ')
+
+    print('You have chosen to replace "%s" with "%s" in file "%s". '
+          'Output will be written to "%s". '
+          'Is this correct? (Y/N)'
+          % (CHAR_TO_FIND, REPLACEMENT_STRING, filename, NEW_FILENAME))
+
+    correct = raw_input('--> ').lower()
+
+    if correct == 'y':
+        print('\n---running program---')
+        file = open(filename, 'r+')
+
+        chars = file.read()
+        cycle_through_characters(chars=chars)
+    else:
+        print('\n---reprompting---')
+        initial_prompt()
+
+
 if __name__ == '__main__':
-    file = open('pset1.tex', 'r+')
-    chars = file.read()
-    cycle_through_characters(chars=chars)
+    initial_prompt()
